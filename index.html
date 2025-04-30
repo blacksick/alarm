@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reminder Shift Kerja</title>
+</head>
+<body>
+  <h1>Reminder Shift Kerja</h1>
+  <p id="tanggal"></p>
+  <p id="shift"></p>
+  <p id="jamMasuk"></p>
+  <p id="jamPulang"></p>
+
+  <script>
+    const tanggalHariIni = new Date();
+    const awalSiklus = new Date("2025-04-28");
+    const selisihHari = Math.floor((tanggalHariIni - awalSiklus) / (1000 * 60 * 60 * 24));
+    const mingguKe = Math.floor(selisihHari / 7);
+
+    const isShift1 = mingguKe % 2 === 0;
+    const shiftInfo = isShift1 ? {
+      nama: "Shift 1 (05:30 - 16:00)",
+      jamMasuk: "05:30",
+      jamPulang: "16:00"
+    } : {
+      nama: "Shift 2 (13:30 - 22:30)",
+      jamMasuk: "13:30",
+      jamPulang: "22:30"
+    };
+
+    document.getElementById("tanggal").textContent = `Hari ini: ${tanggalHariIni.toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+    document.getElementById("shift").textContent = `Kamu sedang menjalani: ${shiftInfo.nama}`;
+    document.getElementById("jamMasuk").textContent = `Alarm Masuk: ${shiftInfo.jamMasuk}`;
+    document.getElementById("jamPulang").textContent = `Alarm Pulang: ${shiftInfo.jamPulang}`;
+
+    // Alarm
+    function setAlarm(jam, pesan) {
+      const [hh, mm] = jam.split(":").map(Number);
+      const now = new Date();
+      const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0);
+
+      if (target < now) return;
+
+      const delay = target.getTime() - now.getTime();
+      setTimeout(() => {
+        alert(pesan);
+        new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg").play();
+      }, delay);
+    }
+
+    setAlarm(shiftInfo.jamMasuk, "⏰ Waktunya masuk kerja!");
+    setAlarm(shiftInfo.jamPulang, "⏰ Waktunya pulang kerja!");
+  </script>
+</body>
+</html>
